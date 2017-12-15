@@ -186,6 +186,12 @@ class DQN:
         act_values = self.model.predict(state)
         return np.argmax(act_values[0])  # returns action
 
+    def testBit(self, int_type, offset):
+        #print(int_type)
+        mask = 1 << offset
+
+        return (int_type & mask)
+
     def replay(self, q_table=None):
         inputs = np.zeros(((self.batch_size, ) + self.state_size))
         targets = np.zeros((self.batch_size, self.action_size))
@@ -207,25 +213,39 @@ class DQN:
                 ##Endre denne når bit kommer
                 #print(state)
                 #print(state)
+
                 for x in range(len(state[0])):
                     for y in range(len(state[0][x])):
-                        value = str(state[0][x][y][0])
-                        valueLen = value.__len__()
-                        if(value[valueLen-3]=="1"):
-                            player_pos = (x, y)
+                        value = int(state[0][x][y][0])
+                        if self.testBit(value, 0) == 1:
+                            player_pos = (y, x)
                             #print("fant 1", i, j)
                             #print(player_pos)
                             #print(state)
                             #print(player_pos)
                 x, y = player_pos[0], player_pos[1]
-                print(x, y)
-                print(state)
+                #print(x, y)
+                #print(state)
                 try:
-                    q_table[x, y] = np.argmax(targets[i]) + 1
+                    q_table[y, x] = np.argmax(targets[i]) + 1
                     #print(q_table)
                     #print(np.argmax(targets[i])+1)
                 except:
                     pass
+                '''
+                player_pos = np.where(self.testBit(state, 0) == 1)
+                # print(player_pos)
+                if len(player_pos[0]) > 0:
+                    x, y = player_pos[1][0], player_pos[2][0]
+                    # print(x, y)
+                    # print()
+                    try:
+                        q_table[x, y] = np.argmax(targets[i]) + 1
+                        print(q_table)
+                    except:
+                        pass
+                '''
+
 
         history = self.model.fit(inputs, targets, epochs=self.train_epochs, verbose=0)
 

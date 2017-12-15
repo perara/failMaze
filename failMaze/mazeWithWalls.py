@@ -14,10 +14,10 @@ if __name__ == '__main__':
 
 
     env_list = [
-        "maze-arr-4x4-full-deterministic-v0"
-        #"maze-arr-9x9-full-deterministic-v0"
+        #"maze-arr-4x4-full-deterministic-v0"
+        #"maze-arr-6x6-full-deterministic-v0"
         #"maze-arr-11x11-stochastic-v0",
-        #"maze-arr-9x9-full-deterministic-v1",
+        "maze-arr-9x9-full-deterministic-v0",
         #"maze-arr-11x11-full-deterministic-v0",
         #"maze-arr-12x12-full-deterministic-v0",
         #"maze-arr-13x13-full-deterministic-v0",

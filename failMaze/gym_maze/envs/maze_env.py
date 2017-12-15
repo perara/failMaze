@@ -180,7 +180,11 @@ class MazeArrFullDet4x4Env(MazeEnv):
     def __init__(self):
         super(MazeArrFullDet4x4Env, self).__init__(4, 4, "array", 1337, full_deterministic=True)
 
+class MazeArrFullDet6x6Env(MazeEnv):
+    id = "maze-arr-6x6-full-deterministic-v0"
 
+    def __init__(self):
+        super(MazeArrFullDet6x6Env, self).__init__(4, 4, "array", 1337, full_deterministic=True)
 
 class MazeArrFullDet9x9Env(MazeEnv):
     id = "maze-arr-9x9-full-deterministic-v0"
