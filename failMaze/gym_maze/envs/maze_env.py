@@ -12,12 +12,11 @@ class MazeEnv(gym.Env):
     id = "maze-v0"
 
     def __init__(self, width, height, state_type, seed=None, full_deterministic=False):
-
         self.env = MazeGame(
             width, height, 1024, 768, state_type, 80, 80, seed=seed, seed_both=full_deterministic
         )
         self.observation_space = self.env.get_state().shape
-        #print(self.observation_space)
+        # print(self.observation_space)
         self.action_space = 4
 
     def _step(self, action):
@@ -48,13 +47,12 @@ class MazeArr9x9Env(MazeEnv):
         super(MazeArr9x9Env, self).__init__(9, 9, "array", 1337)
 
 
-
-
 class MazeArr12x12Env(MazeEnv):
     id = "maze-arr-12x12-full-deterministic-v0"
 
     def __init__(self):
         super(MazeArr12x12Env, self).__init__(12, 12, "array", 1337)
+
 
 class MazeImg9x9Env(MazeEnv):
     id = "maze-img-9x9-deterministic-v0"
@@ -119,6 +117,13 @@ class MazeImg17x17Env(MazeEnv):
         super(MazeImg17x17Env, self).__init__(17, 17, "image", 1337)
 
 
+class MazeArr4x4Env(MazeEnv):
+    id = "maze-arr-4x4-deterministic-v0"
+
+    def __init__(self):
+        super(MazeArr4x4Env, self).__init__(4, 4, "array", 1337)
+
+
 class MazeArr19x19Env(MazeEnv):
     id = "maze-arr-19x19-deterministic-v0"
 
@@ -174,17 +179,27 @@ class MazeImg55x55Env(MazeEnv):
     def __init__(self):
         super(MazeImg55x55Env, self).__init__(55, 55, "image", 1337)
 
+
 class MazeArrFullDet4x4Env(MazeEnv):
     id = "maze-arr-4x4-full-deterministic-v0"
 
     def __init__(self):
         super(MazeArrFullDet4x4Env, self).__init__(4, 4, "array", 1337, full_deterministic=True)
 
+
 class MazeArrFullDet6x6Env(MazeEnv):
     id = "maze-arr-6x6-full-deterministic-v0"
 
     def __init__(self):
-        super(MazeArrFullDet6x6Env, self).__init__(4, 4, "array", 1337, full_deterministic=True)
+        super(MazeArrFullDet6x6Env, self).__init__(6, 6, "array", 1337, full_deterministic=True)
+
+
+class MazeArrFullDet7x7Env(MazeEnv):
+    id = "maze-arr-7x7-full-deterministic-v0"
+
+    def __init__(self):
+        super(MazeArrFullDet7x7Env, self).__init__(7, 7, "array", 1337, full_deterministic=True)
+
 
 class MazeArrFullDet9x9Env(MazeEnv):
     id = "maze-arr-9x9-full-deterministic-v0"

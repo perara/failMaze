@@ -143,9 +143,9 @@ class DQN:
 
         n_routing = 3
         x = Input(shape=self.state_size)
-        """
+
         conv1 = Conv2D(filters=256, kernel_size=1, strides=1, padding='valid', activation='relu', name='conv1')(x)
-        primarycaps = PrimaryCap(conv1, dim_vector=8, n_channels=32, kernel_size=9, strides=2, padding='valid')
+        primarycaps = PrimaryCap(conv1, dim_vector=8, n_channels=32, kernel_size=3, strides=2, padding='valid')
         digitcaps = CapsuleLayer(num_capsule=self.action_size, dim_vector=16, num_routing=n_routing, name='digitcaps')(primarycaps)
         out_caps = Length(name='out_caps')(digitcaps)
 
@@ -163,7 +163,7 @@ class DQN:
         model.add(Dense(512, activation="relu"))
         model.add(Dense(self.action_size, activation="linear"))
         model.compile(optimizer=Adam(lr=self.learning_rate), loss=self._huber_loss)
-
+        """
 
         #plot_model(model, to_file='model.png', show_layer_names=True, show_shapes=True)
         #SVG(model_to_dot(model).create(prog='dot', format='svg'))
