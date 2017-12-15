@@ -206,18 +206,23 @@ class DQN:
 
                 ##Endre denne når bit kommer
                 #print(state)
-                for i in range(len(state[0])):
-                    for j in range(len(state[0][i])):
-                        value = str(state[0][i][j][0])
+                #print(state)
+                for x in range(len(state[0])):
+                    for y in range(len(state[0][x])):
+                        value = str(state[0][x][y][0])
                         valueLen = value.__len__()
                         if(value[valueLen-3]=="1"):
-
-                            player_pos = (j, i)
+                            player_pos = (x, y)
+                            #print("fant 1", i, j)
+                            #print(player_pos)
+                            #print(state)
                             #print(player_pos)
                 x, y = player_pos[0], player_pos[1]
+                print(x, y)
+                print(state)
                 try:
-
                     q_table[x, y] = np.argmax(targets[i]) + 1
+                    #print(q_table)
                     #print(np.argmax(targets[i])+1)
                 except:
                     pass
@@ -242,7 +247,7 @@ class DQN:
 
             for i, j in enumerate(np.random.choice(len(self.memory), self.batch_size, replace=False)):
                 state, action, reward, next_state, terminal = self.memory[j]
-
+                #print("fuckdis")
                 target = reward
 
                 if not terminal:
@@ -250,6 +255,7 @@ class DQN:
 
                 targets[i] = self.model.predict(state)
                 targets[i, action] = target
+                #print(targets)
                 inputs[i] = state
 
             yield inputs, targets

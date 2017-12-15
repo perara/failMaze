@@ -23,14 +23,11 @@ class Maze(object):
         self.np_rng = np_rng
         self.rng = rng
 
-        self.maze = self.generate2(width, height, complexity, density)
-        # print(self.maze)
+        self.maze = self.generate(width, height, complexity, density)
         self.maze = self.maze.reshape((self.maze.shape[0], self.maze.shape[1], 1))
         self.width = self.maze.shape[0]
         self.height = self.maze.shape[1]
-        #self.otherMaze = None
-        #self._generate_maze()
-        #print(self.otherMaze)
+
 
     def validOperation(self, x, y, visited, width, height):
 
@@ -86,12 +83,12 @@ class Maze(object):
 
     def breakWalls(self, Z, width, height):
         visited = []
-        superVisited = []
         finished = False
+
+        #Selects random starting point.
         x, y = (random.randint(0, width - 1), random.randint(0, height - 1))
-        ##Add on spesific position to reduce time spent "looking for" tuplez
         visited.append((x, y))
-        # returns 0, 1, 2 or 3
+
         dirs = [0, 1, 2, 3]
         wall = self.theChoices(x, y, visited, width, height, dirs)
         Z[y, x] -= wall[0]
@@ -105,8 +102,7 @@ class Maze(object):
             if superVisited.__len__() == 0:
                 finished = True
                 break
-            # returns 0, 1, 2 or 3
-            #x, y = self.rng.choice(superVisited)
+            #Selects the newest entry in supervisited.
             x, y = superVisited[superVisited.__len__() - 1]
             if self.pathFinder(x, y, visited, width, height):
                 wall = self.theChoices(x, y, visited, width, height, dirs)
@@ -117,12 +113,13 @@ class Maze(object):
                 Z[wall[2], wall[1]] -= wall[3]
                 # print("Eg jobbe mann")
             else:
+                #Removes that entry (No possible actions allowed from that entry)
                 superVisited.remove((x, y))
 
         return Z
 
 
-    def generate2(self, width=10, height=10, complexity=2.75, density=.5):
+    def generate(self, width=10, height=10, complexity=2.75, density=.5):
         try:
             Z = pl.load(open(str(width)+'x'+str(height)+'.p', 'rb'))
             return Z
@@ -141,7 +138,7 @@ class Maze(object):
                 x[...] = 111100
 
             Z = self.breakWalls(Z, width, height)
-            # print(Z)
+            #print(Z)
             pl.dump(Z, open(str(width)+'x'+str(height)+'.p', 'wb'))
             return Z
 
@@ -264,9 +261,13 @@ class MazeGame(object):
             #print(state)
             #print(state[0][0])
             #print(state[3][0])
+
             state[self.player[1], self.player[0], 0] += 1
             state[self.target[1], self.target[0], 0] += 10
-            state = state/111010
+            #print(self.maze.maze)
+            #print(state)
+            #print(self.player)
+            #state = state/111010
 
             # print(state)
             return state
@@ -390,12 +391,11 @@ class MazeGame(object):
 
     def render(self):
         try:
-            for x in range(len(self.maze.maze[0])):
-                for y in range(len(self.maze.maze[0][x])):
-                    #print(x, y)
-
+            for (x, y, z), value in np.ndenumerate(self.maze.maze):
                     pos = (x * self.tile_w, y * self.tile_h, self.tile_w + 1, self.tile_h + 1)
-                    txt_type = self.q_table[x, y]
+                    #print(pos)
+                    txt_type = self.q_table[y, x]
+                    #print(self.q_table)
                     #print(txt_type)
                     if txt_type == 1:
                         self.maze_layer.blit(self.txt_up, (pos[0] + 8, pos[1] + 8))  # Up
@@ -450,12 +450,16 @@ class MazeGame(object):
             pass
 
     def to_action(self, a):
+        #GO UP
         if a == 0:
             return 0, -1
+        #GO RIGHT
         elif a == 1:
             return 1, 0
+        #GO DOWN
         elif a == 2:
             return 0, 1
+        #GO LEFT
         elif a == 3:
             return -1, 0
 
@@ -501,7 +505,7 @@ class MazeGame(object):
             diff = 6-length
             for i in range(diff):
                 valueStr = "X"+valueStr
-        #1000
+        #10000
         if y < nexty:
             if valueStr[1] == "1":
                 #print("KAN IKKE GÅ NED")
