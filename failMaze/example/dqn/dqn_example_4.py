@@ -140,7 +140,7 @@ class DQN:
         return K.mean(K.sqrt(1+K.square(error))-1, axis=-1)
 
     def _build_model(self):
-
+        """
         n_routing = 3
         x = Input(shape=self.state_size)
 
@@ -151,8 +151,8 @@ class DQN:
 
         model = Model(inputs=[x], outputs=[out_caps])
         model.compile(optimizer=Adam(lr=self.learning_rate), loss=self._huber_loss)
-
         """
+
         #print(self.state_size)
         #print(self.action_size)
         model = Sequential()
@@ -163,7 +163,7 @@ class DQN:
         model.add(Dense(512, activation="relu"))
         model.add(Dense(self.action_size, activation="linear"))
         model.compile(optimizer=Adam(lr=self.learning_rate), loss=self._huber_loss)
-        """
+
 
         #plot_model(model, to_file='model.png', show_layer_names=True, show_shapes=True)
         #SVG(model_to_dot(model).create(prog='dot', format='svg'))
