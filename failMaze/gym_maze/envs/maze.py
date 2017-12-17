@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
 from queue import PriorityQueue
-
 import pygame
 import numpy as np
 import scipy.misc
@@ -530,7 +529,7 @@ class MazeGame(object):
             for (x, y, z), value in np.ndenumerate(self.maze.maze):
                 pos = (x * self.tile_w, y * self.tile_h, self.tile_w + 1, self.tile_h + 1)
                 # print(pos)
-                txt_type = self.q_table[y, x]
+                txt_type = self.q_table[x, y]
                 #print(self.q_table)
                 # print(txt_type)
                 if txt_type == 1:
@@ -566,6 +565,7 @@ class MazeGame(object):
         nextx, nexty = posx + a_vec[0], posy + a_vec[1]
 
         # print(posx, posy)
+
         if self.is_legal2(nextx, nexty):
             self.__draw_player(transparency=0)
             self.player = (nextx, nexty)
@@ -626,6 +626,7 @@ class MazeGame(object):
         return legal
     def is_legal2(self, nextx, nexty):
         x, y = self.player
+
         value = self.maze.maze[y, x, 0]
         if y < nexty:
             if self.testBit(value, 4) == 16:

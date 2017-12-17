@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from threading import Thread
+from sklearn.preprocessing import minmax_scale
 
 import numpy as np
 from collections import deque
@@ -156,11 +157,11 @@ class DQN:
         #print(self.state_size)
         #print(self.action_size)
         model = Sequential()
-        model.add(Conv2D(256, (1, 1), strides=(1, 1), activation="relu", input_shape=self.state_size))
-        model.add(Conv2D(256, (1, 1), strides=(1, 1), activation="relu"))
-        model.add(Conv2D(256, (1, 1), strides=(1, 1), activation="relu"))
+        model.add(Conv2D(128, (1, 1), strides=(1, 1), activation="relu", input_shape=self.state_size))
+        model.add(Conv2D(128, (1, 1), strides=(1, 1), activation="relu"))
+        model.add(Conv2D(128, (1, 1), strides=(1, 1), activation="relu"))
         model.add(Flatten())
-        model.add(Dense(512, activation="relu"))
+        model.add(Dense(1024, activation="relu"))
         model.add(Dense(self.action_size, activation="linear"))
         model.compile(optimizer=Adam(lr=self.learning_rate), loss=self._huber_loss)
 
@@ -172,7 +173,7 @@ class DQN:
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
-    def act(self, state, force_exploit=True):
+    def act(self, state, force_exploit=False):
         self.epsilon = max(self.epsilon_min, self.epsilon - self.epsilon_decay)
 
         if force_exploit:
@@ -199,52 +200,40 @@ class DQN:
         for i, j in enumerate(np.random.choice(len(self.memory), self.batch_size, replace=False)):
             state, action, reward, next_state, terminal = self.memory[j]
 
+
+            s0 = np.reshape(state, state.shape[1:-1])
+            s1 = np.reshape(state, next_state.shape[1:-1])
+            s0 = minmax_scale(s0)
+            s1 = minmax_scale(s1)
+            s0 = np.reshape(s0, state.shape)
+            s1 = np.reshape(s1, next_state.shape)
+
             target = reward
 
             if not terminal:
-                target = reward + self.gamma * np.amax(self.model.predict(next_state)[0])
+                target = reward + self.gamma * np.amax(self.model.predict(s1)[0])
 
-            targets[i] = self.model.predict(state)
+
+            targets[i] = self.model.predict(s0)
             targets[i, action] = target
-            inputs[i] = state
+            inputs[i] = s0
 
             if q_table is not None:
 
-                ##Endre denne når bit kommer
-                #print(state)
-                #print(state)
 
                 for x in range(len(state[0])):
                     for y in range(len(state[0][x])):
                         value = int(state[0][x][y][0])
                         if self.testBit(value, 0) == 1:
-                            player_pos = (y, x)
-                            #print("fant 1", i, j)
-                            #print(player_pos)
-                            #print(state)
-                            #print(player_pos)
+                            player_pos = (x, y)
+
                 x, y = player_pos[0], player_pos[1]
-                #print(x, y)
-                #print(state)
                 try:
-                    q_table[y, x] = np.argmax(targets[i]) + 1
-                    #print(q_table)
-                    #print(np.argmax(targets[i])+1)
+                    if x == 5 and y == 0:
+                        print(targets[i])
+                    q_table[x, y] = np.argmax(targets[i]) + 1
                 except:
                     pass
-                '''
-                player_pos = np.where(self.testBit(state, 0) == 1)
-                # print(player_pos)
-                if len(player_pos[0]) > 0:
-                    x, y = player_pos[1][0], player_pos[2][0]
-                    # print(x, y)
-                    # print()
-                    try:
-                        q_table[x, y] = np.argmax(targets[i]) + 1
-                        print(q_table)
-                    except:
-                        pass
-                '''
 
 
         history = self.model.fit(inputs, targets, epochs=self.train_epochs, verbose=0)
